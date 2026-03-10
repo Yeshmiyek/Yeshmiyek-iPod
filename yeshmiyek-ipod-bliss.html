@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YESHMIYEK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #050a06;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+#stage {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  background: #060c07;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform-origin: top left;
+}
+
+/* Bliss background — deep shadow green to near black */
+#stage::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%,
+    #0d1a0e 0%, #040804 100%);
+}
+
+/* ── iPOD BODY ── */
+#ipod {
+  position: relative;
+  width: 580px;
+  z-index: 10;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,0.95)) drop-shadow(0 10px 30px rgba(0,20,0,0.7));
+}
+
+#ipod-shell {
+  /* Bliss: deep forest green shell */
+  background: linear-gradient(160deg, #1a2e1c 0%, #111e12 40%, #0a1409 100%);
+  border-radius: 0px;
+  padding: 32px 32px 48px;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(100,200,80,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.5),
+    inset 1px 0 0 rgba(100,200,80,0.03),
+    inset -1px 0 0 rgba(100,200,80,0.03);
+}
+
+#ipod-shell::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg,
+    rgba(100,200,80,0.05) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(0,0,0,0.2) 100%);
+  pointer-events: none;
+}
+
+/* ── SCREEN ── */
+#screen-surround {
+  background: #040804;
+  border-radius: 0px;
+  padding: 10px;
+  margin-bottom: 36px;
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,0.95),
+    0 0 0 1px rgba(0,0,0,0.8);
+}
+
+#screen-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 0px;
+  background: #000;
+  cursor: pointer;
+}
+
+video#vid {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+  position: absolute; inset: 0; z-index: 1;
+}
+video#vid.loaded { display: block; }
+
+/* Idle iPod menu — Bliss palette */
+#screen-idle {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex;
+  transition: opacity 0.5s;
+  cursor: pointer;
+}
+#screen-idle.hidden { opacity: 0; pointer-events: none; }
+
+.menu-list {
+  flex: 1;
+  background: #e8f0e8;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  /* Sky blue header like XP taskbar */
+  background: linear-gradient(180deg, #5599dd 0%, #3377bb 100%);
+  border-bottom: 1px solid #2255aa;
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-header-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.menu-header-icons {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 2px;
+}
+
+.menu-item {
+  padding: 10px 14px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1a3a1a;
+  border-bottom: 1px solid rgba(0,80,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.01em;
+  background: #e8f0e8;
+}
+
+.menu-item.active {
+  /* Bliss grass green highlight */
+  background: linear-gradient(90deg, #3a8a22 0%, #2d7a1a 100%);
+  color: #fff;
+}
+
+.menu-item .arrow { opacity: 0.4; }
+
+/* Album art panel — Bliss landscape */
+.album-art {
+  width: 44%;
+  background: #0a1409;
+  position: relative;
+  overflow: hidden;
+}
+
+.album-art-inner {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg,
+    #88bbff 0%,    /* sky blue top */
+    #5599dd 25%,   /* mid sky */
+    #aaddaa 50%,   /* horizon */
+    #4aaa22 72%,   /* bright grass */
+    #1a4a0e 100%   /* shadow grass */
+  );
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding: 14px;
+  position: relative;
+}
+
+/* Cloud-like highlight */
+.album-art-inner::before {
+  content: '';
+  position: absolute;
+  top: 12%; left: 10%; right: 10%;
+  height: 25%;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%,
+    rgba(255,255,255,0.55) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.album-art-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  position: relative; z-index: 1;
+  line-height: 2;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.album-art-name {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 500;
+  position: relative; z-index: 1;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}
+
+/* Now playing overlay */
+#playing-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column;
+  justify-content: flex-start;
+  padding: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+#playing-overlay.visible { opacity: 1; }
+
+.now-playing-bar {
+  background: rgba(0,10,0,0.65);
+  backdrop-filter: blur(6px);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(80,200,80,0.15);
+}
+
+.np-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  /* Grass green */
+  color: rgba(100,220,100,0.75);
+}
+
+.np-name {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(200,240,200,0.85);
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── CLICK WHEEL ── */
+#wheel-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+}
+
+#wheel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+#wheel-ring {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  /* Deep forest green wheel */
+  background: radial-gradient(circle at 38% 32%,
+    #1e2e1e 0%, #111a11 55%, #0a100a 100%);
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.85),
+    inset 0 1px 0 rgba(100,200,80,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.wheel-label {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  /* Sky blue labels */
+  color: rgba(100,180,255,0.4);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.wl-menu { top: 8%;   left: 50%; transform: translateX(-50%); }
+.wl-back { left: 8%;  top: 50%;  transform: translateY(-50%); font-size: 16px; }
+.wl-skip { right: 8%; top: 50%;  transform: translateY(-50%); font-size: 16px; }
+.wl-play { bottom: 8%; left: 50%; transform: translateX(-50%); font-size: 14px; }
+
+#wheel-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38%; height: 38%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%,
+    #1a2a1a 0%, #0d140d 100%);
+  box-shadow:
+    0 3px 8px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(100,200,80,0.05);
+  cursor: pointer;
+}
+
+/* ── NAME ENGRAVING ── */
+#name-tag {
+  text-align: center;
+  margin-top: 22px;
+  pointer-events: none;
+}
+
+.name-text {
+  font-size: 13px;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  /* Grass green engraving */
+  color: rgba(80,180,60,0.22);
+  font-weight: 300;
+}
+
+#file-input { display: none; }
+</style>
+</head>
+<body>
+<input type="file" id="file-input" accept="video/*">
+
+<div id="stage">
+  <div id="ipod">
+    <div id="ipod-shell">
+
+      <div id="screen-surround">
+        <div id="screen-wrap">
+
+          <div id="screen-idle" onclick="document.getElementById('file-input').click()">
+            <div class="menu-list">
+              <div class="menu-header">
+                <span class="menu-header-title">iPod</span>
+                <div class="menu-header-icons">▶ ▮▮▮</div>
+              </div>
+              <div class="menu-item active"><span>Music</span><span class="arrow">›</span></div>
+              <div class="menu-item"><span>Videos</span><span class="arrow">›</span></div>
+              <div class="menu-item"><span>Photos</span><span class="arrow">›</span></div>
+              <div class="menu-item"><span>Podcasts</span><span class="arrow">›</span></div>
+              <div class="menu-item"><span>Settings</span><span class="arrow">›</span></div>
+              <div class="menu-item"><span>Now Playing</span><span class="arrow">›</span></div>
+            </div>
+            <div class="album-art">
+              <div class="album-art-inner">
+                <div class="album-art-label">tap to load</div>
+                <div class="album-art-name">yeshmiyek</div>
+              </div>
+            </div>
+          </div>
+
+          <video id="vid" playsinline loop></video>
+
+          <div id="playing-overlay">
+            <div class="now-playing-bar">
+              <span class="np-label">now playing</span>
+              <span class="np-name" id="np-name">—</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="wheel-wrap">
+        <div id="wheel">
+          <div id="wheel-ring">
+            <span class="wheel-label wl-menu">menu</span>
+            <span class="wheel-label wl-back">⏮</span>
+            <span class="wheel-label wl-skip">⏭</span>
+            <span class="wheel-label wl-play">▶⏸</span>
+          </div>
+          <div id="wheel-center"></div>
+        </div>
+      </div>
+
+      <div id="name-tag">
+        <div class="name-text">yeshmiyek</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function scaleStage() {
+    const stage = document.getElementById('stage');
+    const scale = Math.min(window.innerWidth/1080, window.innerHeight/1920);
+    stage.style.transform = `scale(${scale})`;
+    stage.style.left = ((window.innerWidth  - 1080*scale)/2) + 'px';
+    stage.style.top  = ((window.innerHeight - 1920*scale)/2) + 'px';
+    stage.style.position = 'absolute';
+  }
+  scaleStage();
+  window.addEventListener('resize', scaleStage);
+
+  const vid            = document.getElementById('vid');
+  const fileInput      = document.getElementById('file-input');
+  const screenIdle     = document.getElementById('screen-idle');
+  const playingOverlay = document.getElementById('playing-overlay');
+  const npName         = document.getElementById('np-name');
+  const wheelCenter    = document.getElementById('wheel-center');
+
+  function loadVideo(file) {
+    vid.src = URL.createObjectURL(file);
+    vid.classList.add('loaded');
+    screenIdle.classList.add('hidden');
+    playingOverlay.classList.add('visible');
+    npName.textContent = file.name.replace(/\.[^.]+$/, '');
+    vid.play();
+  }
+
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) loadVideo(e.target.files[0]);
+  });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f?.type.startsWith('video/')) loadVideo(f);
+  });
+
+  wheelCenter.addEventListener('click', () => {
+    if (!vid.src) return;
+    vid.paused ? vid.play() : vid.pause();
+  });
+
+  vid.addEventListener('click', () => {
+    vid.paused ? vid.play() : vid.pause();
+  });
+</script>
+</body>
+</html>
